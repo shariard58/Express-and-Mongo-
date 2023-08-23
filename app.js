@@ -31,11 +31,25 @@ app.post("/",(req, res)=>
                 res.send(person)
             })
         })
-   
+})
 
-
-   
-
+app.get("/getStudent/:id",(req,res)=>
+{
+    db.readData().then(data =>
+        { 
+            const id = parseInt(req.params.id);
+            const selectData = data.find(value=> value.id=== id);
+            if(!selectData) 
+            {
+                res.status(404).send("No student found with this id")
+            }
+            else
+            {
+                res.send(selectData)
+                res.end()
+            }
+         
+        })
 })
 
 app.get("/another",(req, res)=>
@@ -47,5 +61,7 @@ app.listen(PORT, ()=>
 {
     console.log("Server is running successfully")
 })
+
+
 
 console.log("My Name is Shariar Mahmud duke")

@@ -6,108 +6,135 @@ const PORT = 3000;
 
 app.use(express.json())
 
-app.get("/",(req, res) => 
+
+const personList =(req, res)=>
 {
+    {
   
-    db.readData().then(data => {
-        res.send(data);
-        res.end(data)
-    })
-   
-})
+        db.readData().then(data => {
+            res.send(data);
+            res.end(data)
+        })
+       
+    }
+}
+
+
 
 //Post Request
 
-app.post("/",(req, res)=> 
+const postPerson =(req, res)=>
 {
-    const person = req.body;
-  
-    console.log(person)
-    db.readData().then(data => 
-        {
-           data.push(person)
-           db.writeData(data).then(feedback => 
+    
+        const person = req.body;
+      
+        console.log(person)
+        db.readData().then(data => 
             {
-                res.send(person)
+               data.push(person)
+               db.writeData(data).then(feedback => 
+                {
+                    res.send(person)
+                })
             })
-        })
-})
+    
+}
 
-app.get("/getStudent/:id",(req,res)=>
+
+
+// function for specific person
+const selectedPerson =(req, res)=>
 {
-    db.readData().then(data =>
-        { 
-            const id = parseInt(req.params.id);
-            const selectData = data.find(value=> value.id=== id);
-            if(!selectData) 
-            {
-                res.status(404).send("No student found with this id")
-            }
-            else
-            {
-                res.send(selectData)
-                res.end()
-            }
-         
-        })
-})
+    {
+        db.readData().then(data =>
+            { 
+                const id = parseInt(req.params.id);
+                const selectData = data.find(value=> value.id=== id);
+                if(!selectData) 
+                {
+                    res.status(404).send("No student found with this id")
+                }
+                else
+                {
+                    res.send(selectData)
+                    res.end()
+                }
+             
+            })
+    }
+}
+
+
 
 // Put Request
 
-app.put("/update",(req, res) => 
+const updatePerson=(req, res)=>
 {
-    const info = req.body;
-    console.log(info.id)
-    db.readData().then(data=>
-        {
-            console.log(data)
-            const i = data.findIndex(s=>s.id == info.id)
-            if(i<=-1)
+    {
+        const info = req.body;
+        console.log(info.id)
+        db.readData().then(data=>
             {
-                res.status(404).send("No student found with this id")
-                res.end()
-            }
-           else 
-           {
-             data[i]= info;
-             db.writeData(data).then(feedback => 
+                console.log(data)
+                const i = data.findIndex(s=>s.id == info.id)
+                if(i<=-1)
                 {
-                    res.send(info)
-                })
-           }
+                    res.status(404).send("No student found with this id")
+                    res.end()
+                }
+               else 
+               {
+                 data[i]= info;
+                 db.writeData(data).then(feedback => 
+                    {
+                        res.send(info)
+                    })
+               }
+    
+            })
+    }
+}
 
-        })
-})
+
 
 // delete Request
 
-app.delete("/delete/:id",(req, res)=>
-{
-    const id = parseInt(req.params.id)
-    db.readData().then(data => 
-        {
-            const index = data.findIndex(s => s.id==id)
-            if(index<=-1)
+const deletePerson =(req, res)=>
+    {
+        const id = parseInt(req.params.id)
+        db.readData().then(data => 
             {
-                res.status(404).send("No id mathched with this id")
-                res.end()
-            }
+                const index = data.findIndex(s => s.id==id)
+                if(index<=-1)
+                {
+                    res.status(404).send("No id mathched with this id")
+                    res.end()
+                }
+    
+                else 
+                {
+                    const newData = data.filter(s=> s.id != id)
+                    console.log(newData)
+                    db.writeData(newData).then(x => 
+                        {
+                            res.send("Delted")
+                            res.end()
+                        })
+                    res.end()
+                }
+            })
+        // console.log(id)
+        // res.end()
+    }
 
-            else 
-            {
-                const newData = data.filter(s=> s.id != id)
-                console.log(newData)
-                db.writeData(newData).then(x => 
-                    {
-                        res.send("Delted")
-                        res.end()
-                    })
-                res.end()
-            }
-        })
-    // console.log(id)
-    // res.end()
-})
+// All the request , the necessary functionsa are above
+
+    app.route("/").get(personList).post(personList);
+    // app.get("/",personList)
+    // app.post("/",postPerson)
+    app.route("/person/:id").get(selectedPerson).delete(deletePerson)
+    app.put("/person",updatePerson)
+
 
 app.get("/another",(req, res)=>
 {

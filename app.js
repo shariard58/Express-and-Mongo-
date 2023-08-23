@@ -1,4 +1,5 @@
 const express = require("express")
+const db = require("./db")
 const fs = require("fs")
 const app = express()
 const PORT = 3000;
@@ -8,12 +9,11 @@ app.use(express.json())
 app.get("/",(req, res) => 
 {
   
-    fs.readFile("./db.json","utf-8",(err, data)=>
-    {
-        let newData = JSON.parse(data).students;
-        res.send(newData)
-        res.end()       
+    db.readData().then(data => {
+        res.send(data);
+        res.end(data)
     })
+   
 })
 
 //Post Request
@@ -21,27 +21,20 @@ app.get("/",(req, res) =>
 app.post("/",(req, res)=> 
 {
     const person = req.body;
-    // fs.readFile("/app.js","utf-8",(err, data)=>
-    // {
-    //     let newData = JSON.parse(data);
-    //     console.log(newData)
-
-    // })
-    console.log(person)
-    fs.readFile("./db.json","utf-8",(err, data)=>
-    {
-        let newData = JSON.parse(data);
-        newData.students.push(person)
-       console.log("The Data is",newData)  
-       fs.writeFile("./db.json",JSON.stringify(newData), (err)=>
-       {
-        res.send(newData)
-       })   
-    })
   
-    res.send("Posted Successfully")
-    // fs.writeFile("./db.json",person,()=>)
-    // res.send("Posted successfully")
+    console.log(person)
+    db.readData().then(data => 
+        {
+           data.push(person)
+           db.writeData(data).then(feedback => 
+            {
+                res.send(person)
+            })
+        })
+   
+
+
+   
 
 })
 

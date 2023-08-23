@@ -20,8 +20,28 @@ app.get("/",(req, res) =>
 
 app.post("/",(req, res)=> 
 {
-    console.log(req.body)
-    res.send("Posted successfully")
+    const person = req.body;
+    // fs.readFile("/app.js","utf-8",(err, data)=>
+    // {
+    //     let newData = JSON.parse(data);
+    //     console.log(newData)
+
+    // })
+    console.log(person)
+    fs.readFile("./db.json","utf-8",(err, data)=>
+    {
+        let newData = JSON.parse(data);
+        newData.students.push(person)
+       console.log("The Data is",newData)  
+       fs.writeFile("./db.json",JSON.stringify(newData), (err)=>
+       {
+        res.send(newData)
+       })   
+    })
+  
+    res.send("Posted Successfully")
+    // fs.writeFile("./db.json",person,()=>)
+    // res.send("Posted successfully")
 
 })
 

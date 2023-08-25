@@ -7,9 +7,10 @@ const fs = require("fs")
 
 const router = express.Router()
 
-const personList =(req, res)=>
+const personList = async (req, res)=>
 {
-   
+   const person = await Person.find().sort({name:1});
+   res.send(person)
 }
 
 //Post Request
@@ -36,9 +37,21 @@ const postPerson = async (req, res)=>
 }
 
 // function for specific person
-const selectedPerson =(req, res)=>
+const selectedPerson = async(req, res)=>
 {
+    const id = req.params.id;
+    console.log(id)
    
+    try{
+        
+       const person = await Person.findById(id);
+       res.send(person)
+       res.end()
+    }
+    catch(err)
+    {
+        return res.status(404).send("Id not found")
+    }
 }
 
 // Put Request

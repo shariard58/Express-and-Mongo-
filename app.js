@@ -1,14 +1,15 @@
 const express = require("express")
 const app = express()
-const db =require("./db")
-
-
-
 const PORT = 3000;
-
- const studentRouter = require("./routers/personRouter");
+const studentRouter = require("./routers/personRouter");
 const morgan = require("morgan");
 app.use(express.json())
+const mongoose = require("mongoose")
+mongoose.connect("mongodb://localhost:27017/person", {
+    useNewUrlParser:true,
+    useUnifiedTopology:true
+}).then(()=> console.log("Connected MongoDb successfully")).catch(err=>console.log("MongoDb Connection failed"))
+
 
 app.use(morgan("dev"))
 app.use((req, res, next)=>
@@ -29,6 +30,6 @@ app.listen(PORT, ()=>
     console.log("Server is running successfully")
 })
 
-
-
-console.log("My Name is Shariar Mahmud duke")
+// Mongoose -> Model -> Collection
+// Import korte hbe model k
+// Connect Database
